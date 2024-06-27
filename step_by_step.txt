@@ -1,0 +1,6 @@
+npm i vue-router
+npm i --save axios
+npm i --save-dev @types/axios @types/node
+npm i --save bootstrap
+npm i --save vee-validate
+npm i --save yup
