@@ -5,20 +5,30 @@ class HttpService{
     private apiClient:AxiosInstance;
     private testDefind;
     public constructor(scheme:string,baseDomain:string,port:string,path:string) {        
-        let apiClient:AxiosInstance=axios.create({
+        let apiClient:AxiosInstance=axios.create({            
             baseURL:scheme+"://"+baseDomain+":"+port+"/"+path,
             headers: {
-                'Content-Type': 'application/json',
-                'Accept':'application/json'
+                'Content-Type': 'application/json',                
+                'Accept':'application/json',                
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Credentials': true,
             },
         })
         this.apiClient=apiClient;        
     }
-    public updateBearToken(token:string){        
-        this.apiClient.interceptors.request.use(function (config) {            
-            config.headers.Authorization =  token ? `Bearer ${token}` : '';
-            return config;
-        });
+    public updateBearToken(token:string){
+        let baseURL=this.apiClient.defaults.baseURL
+        let apiClient:AxiosInstance=axios.create({            
+            baseURL:baseURL,
+            headers: {
+                'Content-Type': 'application/json',                
+                'Accept':'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Credentials': true,
+                'Authorization': "Bearer "+token
+            },
+        })
+        this.apiClient=apiClient;
     }
     public async callAPIMethodGet(endPoint:string,params:any):Promise<any>{
         let response=await this.apiClient.get(endPoint,params);
@@ -39,5 +49,5 @@ class HttpService{
         return response;
     }
 }
-const callAPI=new HttpService("https","dym-vietnam.dev","443","/api");
+const callAPI=new HttpService("https","dym-vietnam.dev","443","api");
 export default callAPI;
