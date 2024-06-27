@@ -2,7 +2,8 @@ import axios,{AxiosInstance, HttpStatusCode } from "axios";
 
 
 class HttpService{    
-    private apiClient:AxiosInstance;    
+    private apiClient:AxiosInstance;
+    private testDefind;
     public constructor(scheme:string,baseDomain:string,port:string,path:string) {        
         let apiClient:AxiosInstance=axios.create({
             baseURL:scheme+"://"+baseDomain+":"+port+"/"+path,
@@ -17,7 +18,7 @@ class HttpService{
         this.apiClient.interceptors.request.use(function (config) {            
             config.headers.Authorization =  token ? `Bearer ${token}` : '';
             return config;
-          });
+        });
     }
     public async callAPIMethodGet(endPoint:string,params:any):Promise<any>{
         let response=await this.apiClient.get(endPoint,params);
