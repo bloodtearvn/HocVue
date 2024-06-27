@@ -9,16 +9,19 @@
       <label for="password">Password</label>
       <input type="password" class="form-control" id="password" required v-model="LoginParams.password"
         name="password" />
-    </div>
-
-    <button @click="handleLogin" class="btn btn-success">Login</button>
+    </div>    
+    <button @click="handleLogin" class="btn btn-success" :disabled="loading">
+      <span v-show="loading" class="spinner-border spinner-border-sm"></span>
+      <span>Login</span>
+    </button>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
-import http_lam from "@repositories/http-common.ts"
+import callAPI from "@repositories/http-common.ts"
 import LoginParams from "@models/Request/Login.ts"
 import ResponseLogin from "@models/Response/ResponseLogin.ts"
+import useAuthStore from "@store/AuthStore.js"
 export default defineComponent({
   name: "login-action",
   data() {
@@ -27,7 +30,7 @@ export default defineComponent({
         email: "",
         password: "",
       } as LoginParams,
-      submitted: false,
+      loading: false,
       ResponseLogin:{
         access_token:""
       }
@@ -35,14 +38,22 @@ export default defineComponent({
   },
   methods: {
     handleLogin() {
+      this.loading = true;
       let data = {
         email: this.LoginParams.email,
         password: this.LoginParams.password,
       };
-      http_lam.callAPIMethodPost("auth/login", data).then((response: any) => {        
-        if (response.data!=null){
-          console.log(response.data.access_token);
-          this.ResponseLogin.access_token=response.data.access_token          
+      callAPI.callAPIMethodPost("auth/login", data).then((response: any) => {        
+        if (response.data!=null){          
+          let authStore = useAuthStore();
+          let data=JSON.stringify(response.data);
+          authStore.setAccessToken(data.access_token);
+          callAPI.updateBearToken(data.access_token)
+          localStorage.setItem('access_token', data);
+          this.$router.push({ path: '/' })
+        }
+        else{
+          this.loading = false;
         }
       });
     },

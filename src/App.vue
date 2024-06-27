@@ -8,7 +8,9 @@
           <router-link to="/login">Login</router-link><br>
         </div>
         <div v-else="!isLogined">
-          <a class="nav-link" @click.prevent="logOut">LogOut</a>
+          <router-link to="/industry_list">Industry List</router-link><br>
+          <router-link to="/about">About</router-link><br>
+          <a class="nav-link" @click.prevent="handleLogout">LogOut</a>
         </div>
       </div>
     </aside>
@@ -18,11 +20,37 @@
     <footer class="footer">My footer</footer>
   </div>
 </template>
-<script setup lang="ts">
-import {computed } from 'vue'
-import useAuthStore from "@store/Response/AuthStore.js"
-import ResponseLogin from "@models/Response/ResponseLogin.ts"
-const isLogined = computed(() => {
-  return this.ResponseLogin.access_token != "";
-})
+<script lang="ts">
+import { defineComponent, computed} from "vue";
+import useAuthStore from "@store/AuthStore.js"
+export default defineComponent({
+  name: "App",
+  data() {
+    return {      
+      submitted: false,
+      ResponseLogin:{
+        access_token:""
+      } as ResponseLogin
+    };
+  },
+  computed: {
+    isLogined() {
+      let _access_token = localStorage.getItem("access_token");      
+      let authStore = useAuthStore();
+      if (_access_token!=null && _access_token!="" ){
+        authStore.setAccessToken(_access_token)
+      }
+      let currentAccessToken=authStore.getAccessToken()
+      return currentAccessToken!=null && currentAccessToken!=""
+    },
+  },
+  methods:{
+    handleLogout(){
+      let authStore = useAuthStore();
+      authStore.setAccessToken("");
+      localStorage.removeItem('access_token');
+      this.$router.push({ path: '/' })
+    }
+  }
+});
 </script>

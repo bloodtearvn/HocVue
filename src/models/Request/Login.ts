@@ -1,4 +1,4 @@
-export default interface LoginParams {
+export default class LoginParams {
     email: string;
     password: string;    
   }
