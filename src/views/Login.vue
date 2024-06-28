@@ -45,12 +45,10 @@ export default defineComponent({
       };
       callAPI.callAPIMethodPost("auth/login", data).then((response: any) => {        
         if (response.data!=null){          
-          let authStore = useAuthStore();          
-          localStorage.setItem('access_token',response.data.access_token);
-          
-          authStore.setAccessToken(response.data.access_token);          
+          let authStore = useAuthStore()
+          localStorage.setItem('access_token',response.data.access_token)          
+          authStore.setAccessToken(response.data.access_token)
           callAPI.updateBearToken(response.data.access_token)
-          
           this.$router.push({ path: '/' })
         }
         else{

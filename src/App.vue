@@ -26,16 +26,11 @@ import useAuthStore from "@store/AuthStore.js"
 export default defineComponent({
   name: "App",
   data() {
-    return {      
-      submitted: false,
-      ResponseLogin:{
-        access_token:""
-      } as ResponseLogin
-    };
+    return {};
   },
   computed: {
     isLogined() {
-      let _access_token = localStorage.getItem("access_token");      
+      let _access_token = localStorage.getItem("access_token");
       let authStore = useAuthStore();
       if (_access_token!=null && _access_token!="" ){
         authStore.setAccessToken(_access_token)
@@ -51,6 +46,6 @@ export default defineComponent({
       localStorage.removeItem('access_token');
       this.$router.push({ path: '/' })
     }
-  }
+  },  
 });
 </script>

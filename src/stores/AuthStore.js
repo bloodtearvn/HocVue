@@ -10,6 +10,9 @@ export const useAuthStore = defineStore('Auth', {
         getAccessToken() {
             return this.auth
         },
+        isLogedIn(){
+            return this.auth!=null && this.auth!=""
+        }
     },
 })
 export default useAuthStore

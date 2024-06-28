@@ -4,27 +4,29 @@ import axios,{AxiosInstance, HttpStatusCode } from "axios";
 class HttpService{    
     private apiClient:AxiosInstance;
     private testDefind;
+    private bearToken;
     public constructor(scheme:string,baseDomain:string,port:string,path:string) {        
         let apiClient:AxiosInstance=axios.create({            
             baseURL:scheme+"://"+baseDomain+":"+port+"/"+path,
-            headers: {
-                'Content-Type': 'application/json',                
+            headers: {                
                 'Accept':'application/json',                
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Credentials': true,
+                // 'Access-Control-Allow-Origin': '*',
+                'Content-Type':'application/json;charset=utf-8',
+                // 'Access-Control-Allow-Credentials': true,
             },
         })
-        this.apiClient=apiClient;        
+        this.apiClient=apiClient;
     }
     public updateBearToken(token:string){
         let baseURL=this.apiClient.defaults.baseURL
+        this.bearToken=token;
         let apiClient:AxiosInstance=axios.create({            
             baseURL:baseURL,
-            headers: {
-                'Content-Type': 'application/json',                
+            headers: {                
                 'Accept':'application/json',
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Credentials': true,
+                // 'Access-Control-Allow-Origin': '*',                
+                'Content-Type':'application/json;charset=utf-8',
+                // 'Access-Control-Allow-Credentials': true,
                 'Authorization': "Bearer "+token
             },
         })
@@ -32,7 +34,9 @@ class HttpService{
     }
     public async callAPIMethodGet(endPoint:string,params:any):Promise<any>{
         let response=await this.apiClient.get(endPoint,params);
-        return response;
+        if (response.status==HttpStatusCode.Ok)
+            return response.data;
+        return response
     }
     public async callAPIMethodPost(endPoint:string,params:any):Promise<any>{
         let response=await this.apiClient.post(endPoint,params);
@@ -50,4 +54,5 @@ class HttpService{
     }
 }
 const callAPI=new HttpService("https","dym-vietnam.dev","443","api");
+// const callAPI=new HttpService("http","localhost","88","api");
 export default callAPI;
